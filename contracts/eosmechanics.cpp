@@ -1,18 +1,12 @@
 #include <eosio/eosio.hpp>
 #include <math.h>
-#include <string>
 #pragma precision=log10l(ULLONG_MAX)/2
 typedef enum { FALSE=0, TRUE=1 } BOOL;
 
 // Max when calculating primes in cpu test
 #define CPU_PRIME_MAX 375
 
-// Number of rows to write/read in ram test
-#define RAM_ROWS 75
-
 using namespace eosio;
-using namespace std;
-using std::string;
 
 CONTRACT eosmechanics : public eosio::contract {
     public:
@@ -22,9 +16,7 @@ CONTRACT eosmechanics : public eosio::contract {
          * Simple CPU benchmark that calculates Mersenne prime numbers.
          */
         [[eosio::action]] void cpu() {
-            
             int p;
-
             //eosio::print_f("Mersenne primes:\n");
             for (p = 2; p <= CPU_PRIME_MAX; p += 1) {
                 if (is_prime(p) && is_mersenne_prime(p)) {
@@ -32,8 +24,6 @@ CONTRACT eosmechanics : public eosio::contract {
                     //eosio::print_f(" %u", p);
                 }
             }
-
-            check(false,"execution completed: " + to_string(p));
         }
 
     private:
