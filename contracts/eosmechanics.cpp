@@ -1,6 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <math.h>
-#include <std.h>
+#include <string>
 #pragma precision=log10l(ULLONG_MAX)/2
 typedef enum { FALSE=0, TRUE=1 } BOOL;
 
@@ -11,6 +11,8 @@ typedef enum { FALSE=0, TRUE=1 } BOOL;
 #define RAM_ROWS 75
 
 using namespace eosio;
+using namespace std;
+using std::string;
 
 CONTRACT eosmechanics : public eosio::contract {
     public:
