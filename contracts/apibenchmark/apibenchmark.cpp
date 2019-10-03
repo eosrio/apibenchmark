@@ -87,12 +87,18 @@ CONTRACT apibenchmark : public eosio::contract {
 
                                 // take average
                                 auto sum = 0;
+                                auto count = 0;
                                 for(int k = 0; k < api.nodes[j].measurements.size(); ++k) {
                                     if(api.nodes[j].measurements[k].status == 200) {
                                         sum = sum + api.nodes[j].measurements[k].elapsed;
+                                        count++;
                                     }
                                 }
-                                api.nodes[j].avg_perf = (uint16_t)((float)sum / (float)api.nodes[j].measurements.size());
+                                if(count > 0) {
+                                    api.nodes[j].avg_perf = (uint16_t)((float)sum / (float)count);
+                                } else {
+                                    api.nodes[j].avg_perf = 0;
+                                }
                             }
 
                         }
