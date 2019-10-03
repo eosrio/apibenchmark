@@ -1,5 +1,4 @@
-#include <eosiolib/eosio.hpp>
-//#include <eosiolib/print.hpp>
+#include <eosio/eosio.hpp>
 #include <math.h>
 #pragma precision=log10l(ULLONG_MAX)/2
 typedef enum { FALSE=0, TRUE=1 } BOOL;
@@ -34,45 +33,6 @@ CONTRACT eosmechanics : public eosio::contract {
             }
         }
 
-        /**
-         * Simple EOS RAM benchmark which reads and writes a table.
-         */
-        [[eosio::action]] void ram() {
-            ramdata_index ramdata(_self, _self.value);
-
-            // Only let us run this
-            require_auth(_self);
-
-            int i;
-
-            // Write
-            for (i = 0; i < RAM_ROWS; i++) {
-                ramdata.emplace(_self, [&](auto& row) {
-                    row.id = i;
-                    row.one = "aloha";
-                });
-            }
-
-            // Read
-            for (const auto& row: ramdata) {
-                //eosio::print_f("read %d: %s\n", row.id, row.one);
-                i = row.id;
-            }
-
-            // Delete
-            for(auto itr = ramdata.begin(); itr != ramdata.end();) {
-                itr = ramdata.erase(itr);
-            }
-        }
-
-        /**
-         * Simple EOS Net benchmark which just accepts any string passed in.
-         */
-        [[eosio::action]] void net(std::string input) {
-            // Only let us run this
-            require_auth(_self);
-        }
-
     private:
 
         BOOL is_prime(int p) {
@@ -102,18 +62,6 @@ CONTRACT eosmechanics : public eosio::contract {
             }
             return BOOL(s == 0);
         }
-
-        // @abi table ramdata i64
-        struct [[eosio::table]] ramdata {
-            uint64_t id;
-            std::string one;
-
-            auto primary_key()const { return id; }
-            EOSLIB_SERIALIZE(ramdata, (id)(one))
-        };
-
-        typedef eosio::multi_index<"ramdata"_n, ramdata> ramdata_index;
-
 };
 
-EOSIO_DISPATCH(eosmechanics, (cpu)(ram)(net))
+EOSIO_DISPATCH(eosmechanics, (cpu))
