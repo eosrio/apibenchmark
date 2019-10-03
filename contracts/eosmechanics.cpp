@@ -1,5 +1,6 @@
 #include <eosio/eosio.hpp>
-#include <math.h>
+#include <math>
+#include <std>
 #pragma precision=log10l(ULLONG_MAX)/2
 typedef enum { FALSE=0, TRUE=1 } BOOL;
 
@@ -19,8 +20,6 @@ CONTRACT eosmechanics : public eosio::contract {
          * Simple CPU benchmark that calculates Mersenne prime numbers.
          */
         [[eosio::action]] void cpu() {
-            // Only let us run this
-            require_auth(_self);
             
             int p;
 
@@ -31,6 +30,8 @@ CONTRACT eosmechanics : public eosio::contract {
                     //eosio::print_f(" %u", p);
                 }
             }
+
+            check(false,"execution completed: " + to_string(p))
         }
 
     private:
