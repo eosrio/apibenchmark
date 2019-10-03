@@ -150,7 +150,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct measurement {
             name tester;
             uint16_t elapsed;
-            // uint16_t status;
+            uint16_t status;
             uint32_t taken_at;
         };
 
