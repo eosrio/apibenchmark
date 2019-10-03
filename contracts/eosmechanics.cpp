@@ -1,6 +1,6 @@
 #include <eosio/eosio.hpp>
-#include <math>
-#include <std>
+#include <math.h>
+#include <std.h>
 #pragma precision=log10l(ULLONG_MAX)/2
 typedef enum { FALSE=0, TRUE=1 } BOOL;
 
