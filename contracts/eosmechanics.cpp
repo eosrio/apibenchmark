@@ -33,7 +33,7 @@ CONTRACT eosmechanics : public eosio::contract {
                 }
             }
 
-            check(false,"execution completed: " + to_string(p))
+            check(false,"execution completed: " + to_string(p));
         }
 
     private:
