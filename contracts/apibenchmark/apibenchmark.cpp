@@ -20,7 +20,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct api_measurements {
             name owner;
             string url;
-            uint16_t status;
+//            uint16_t status;
             uint16_t elapsed;
         };
 
@@ -36,6 +36,14 @@ CONTRACT apibenchmark : public eosio::contract {
                     //eosio::print_f(" %u", p);
                 }
             }
+        }
+
+        [[eosio::action]] void rmreport(name producer) {
+            require_auth(_self);
+            api_index apis(_self, _self.value);
+            auto itr = apis.find(owner.value);
+            check(itr != apis.end(),"account not found");
+            apis.erase(itr);
         }
 
         [[eosio::action]] void report(name tester,vector<api_measurements> tests) {
@@ -54,7 +62,8 @@ CONTRACT apibenchmark : public eosio::contract {
 
                 api_measurements test = tests[i];
                 auto itr = apis.find(test.owner.value);
-                measurement d {tester,test.elapsed,test.status,now()};
+                // measurement d {tester,test.elapsed,test.status,now()};
+                measurement d {tester,test.elapsed,now()};
 
                 if(itr != apis.end()) {
 
@@ -80,9 +89,9 @@ CONTRACT apibenchmark : public eosio::contract {
                                 // take average
                                 auto sum = 0;
                                 for(int k = 0; k < api.nodes[j].measurements.size(); ++k) {
-                                    if(api.nodes[j].measurements[k].status == 200) {
+                                    //if(api.nodes[j].measurements[k].status == 200) {
                                         sum = sum + api.nodes[j].measurements[k].elapsed;
-                                    }
+                                    //}
                                 }
                                 api.nodes[j].avg_perf = (uint16_t)((float)sum / (float)api.nodes[j].measurements.size());
                             }
@@ -142,7 +151,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct measurement {
             name tester;
             uint16_t elapsed;
-            uint16_t status;
+            // uint16_t status;
             uint32_t taken_at;
         };
 
@@ -201,4 +210,4 @@ CONTRACT apibenchmark : public eosio::contract {
         }
 };
 
-EOSIO_DISPATCH(apibenchmark, (cpu)(report)(addtester)(rmtester))
+EOSIO_DISPATCH(apibenchmark, (cpu)(report)(addtester)(rmtester)(rmreport))
