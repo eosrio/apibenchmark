@@ -20,6 +20,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct api_measurements {
             name owner;
             string url;
+            uint16_t status;
             uint16_t elapsed;
         };
 
@@ -53,7 +54,7 @@ CONTRACT apibenchmark : public eosio::contract {
 
                 api_measurements test = tests[i];
                 auto itr = apis.find(test.owner.value);
-                measurement d {tester,test.elapsed,now()};
+                measurement d {tester,test.elapsed,test.status,now()};
 
                 if(itr != apis.end()) {
 
@@ -79,7 +80,9 @@ CONTRACT apibenchmark : public eosio::contract {
                                 // take average
                                 auto sum = 0;
                                 for(int k = 0; k < api.nodes[j].measurements.size(); ++k) {
-                                    sum = sum + api.nodes[j].measurements[k].elapsed;
+                                    if(api.nodes[j].measurements[k].status == 200) {
+                                        sum = sum + api.nodes[j].measurements[k].elapsed;
+                                    }
                                 }
                                 api.nodes[j].avg_perf = (uint16_t)((float)sum / (float)api.nodes[j].measurements.size());
                             }
@@ -139,6 +142,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct measurement {
             name tester;
             uint16_t elapsed;
+            uint16_t status;
             uint32_t taken_at;
         };
 
@@ -150,7 +154,7 @@ CONTRACT apibenchmark : public eosio::contract {
 
         TABLE api {
             name owner;
-            vector<node> nodes;
+            vector<node> nodes;4
             uint64_t primary_key() const {return owner.value;}
         };
 
