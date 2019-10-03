@@ -163,7 +163,7 @@ CONTRACT apibenchmark : public eosio::contract {
 
         TABLE api {
             name owner;
-            vector<node> nodes;4
+            vector<node> nodes;
             uint64_t primary_key() const {return owner.value;}
         };
 
