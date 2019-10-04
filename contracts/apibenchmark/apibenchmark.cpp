@@ -52,15 +52,19 @@ CONTRACT apibenchmark : public eosio::contract {
             tester_index testers(_self, _self.value);
 
             auto tester_itr = testers.find(tester.value);
-
             check(tester_itr != testers.end(),"Tester account not registered!");
             check(tests.size() > 0,"Must include at least one test");
 
             api_index apis(_self, _self.value);
+            producers_table producers(N(eosio), N(eosio));
 
             for (int i = 0; i < tests.size(); ++i) {
 
                 api_measurements test = tests[i];
+
+                auto prod_itr = producers.find(test.owner.value);
+                check(prod_itr != producers.find(),"Tested account must be registered producer");
+
                 auto itr = apis.find(test.owner.value);
                 measurement d {tester,test.elapsed,test.status,now()};
 
@@ -152,6 +156,20 @@ CONTRACT apibenchmark : public eosio::contract {
         }
 
     private:
+
+        struct producer_info {
+            name                  owner;
+            double                total_votes=0;
+            eosio::public_key     producer_key;
+            bool                  is_active=true;
+            std::string           url;
+            uint32_t              unpaid_blocks=0;
+            time_point            last_claim_time;
+            uint16_t              location=0;
+            uint64_t primary_key() const {return owner.value;}
+        };
+
+        typedef multi_index<"producers"_n, producer_info> producers_table;
 
         struct measurement {
             name tester;
