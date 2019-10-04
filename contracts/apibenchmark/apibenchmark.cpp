@@ -63,7 +63,7 @@ CONTRACT apibenchmark : public eosio::contract {
                 api_measurements test = tests[i];
 
                 auto prod_itr = producers.find(test.owner.value);
-                check(prod_itr != producers.find(),"Tested account must be registered producer");
+                check(prod_itr != producers.end(),"Tested account must be registered producer");
 
                 auto itr = apis.find(test.owner.value);
                 measurement d {tester,test.elapsed,test.status,now()};
