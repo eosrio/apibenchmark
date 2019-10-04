@@ -1,5 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <eosio/system.hpp>
+#include <eosio/singleton.hpp>
 #include <math.h>
 #include <vector>
 #pragma precision=log10l(ULLONG_MAX)/2
@@ -57,14 +58,14 @@ CONTRACT apibenchmark : public eosio::contract {
 
             api_index apis(_self, _self.value);
 
-            producers_table _producers("eosio"_n, "eosio"_n);
+            producers_table prods(name("eosio"),name("eosio"));
 
             for (int i = 0; i < tests.size(); ++i) {
 
                 api_measurements test = tests[i];
 
-                auto prod = _producers.find(test.owner.value);
-                check(prod != _producers.end(),"Tested account must be registered producer");
+                auto prod = prods.find(test.owner.value);
+                check(prod != prods.end(),"Tested account must be registered producer");
 
                 auto itr = apis.find(test.owner.value);
                 measurement d {tester,test.elapsed,test.status,now()};
@@ -161,7 +162,7 @@ CONTRACT apibenchmark : public eosio::contract {
         struct [[eosio::table, eosio::contract("eosio.system")]] producer_info {
               name                  owner;
               double                total_votes = 0;
-              public_key            producer_key;
+              eosio::public_key            producer_key;
               bool                  is_active = true;
               std::string           url;
               uint32_t              unpaid_blocks = 0;
