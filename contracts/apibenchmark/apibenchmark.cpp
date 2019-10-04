@@ -56,14 +56,15 @@ CONTRACT apibenchmark : public eosio::contract {
             check(tests.size() > 0,"Must include at least one test");
 
             api_index apis(_self, _self.value);
-            producers_table producers(N(eosio), N(eosio));
+
+            producers_table _producers("eosio"_n, "eosio"_n);
 
             for (int i = 0; i < tests.size(); ++i) {
 
                 api_measurements test = tests[i];
 
-                auto prod_itr = producers.find(test.owner.value);
-                check(prod_itr != producers.end(),"Tested account must be registered producer");
+                auto prod = _producers.find(test.owner.value);
+                check(prod != _producers.end(),"Tested account must be registered producer");
 
                 auto itr = apis.find(test.owner.value);
                 measurement d {tester,test.elapsed,test.status,now()};
