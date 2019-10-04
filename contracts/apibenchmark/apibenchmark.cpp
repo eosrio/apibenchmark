@@ -158,18 +158,24 @@ CONTRACT apibenchmark : public eosio::contract {
     private:
 
         struct producer_info {
-            name                  owner;
-            double                total_votes=0;
-            eosio::public_key     producer_key;
-            bool                  is_active=true;
-            std::string           url;
-            uint32_t              unpaid_blocks=0;
-            time_point            last_claim_time;
-            uint16_t              location=0;
-            uint64_t primary_key() const {return owner.value;}
-        };
+    name                  owner;
+    double                total_votes = 0;
+    eosio::public_key     producer_key; /// a packed public key object
+    bool                  is_active = true;
+    std::string           url;
+    uint32_t              unpaid_blocks = 0;
+    time_point            last_claim_time;
+    uint16_t              location = 0;
 
-        typedef multi_index<"producers"_n, producer_info> producers_table;
+    uint64_t primary_key()const { return owner.value;                             }
+    double   by_votes()const    { return is_active ? -total_votes : total_votes;  }
+    bool     active()const      { return is_active;                               }
+    //void     deactivate()       { producer_key = public_key(); is_active = false; }
+
+  };
+
+  typedef eosio::multi_index<N(producers), producer_info,
+      indexed_by<N(prototalvote), const_mem_fun<producer_info, double, &producer_info::by_votes>>> producers_table;
 
         struct measurement {
             name tester;
