@@ -3,8 +3,10 @@ Nodeos Chain API benchmarking oracle contract
 
 Made with ♥ by EOS Rio
 
-EOS Mainnet: `apibenchmark`
-BOS Mainnet: `apibenchmark`
+- EOS: `apibenchmark`
+- BOS: `apibenchmark`
+- WAX: `apibenchmark`
+- Telos: `apibenchmark`
 
 ### 1. Manual benchmarking instructions
 
