@@ -1,6 +1,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/system.hpp>
 #include <eosio/singleton.hpp>
+#include <eosio/privileged.hpp>
 #include <math.h>
 #include <vector>
 #pragma precision=log10l(ULLONG_MAX)/2
@@ -24,25 +25,6 @@ CONTRACT apibenchmark : public eosio::contract {
             uint16_t status;
             uint16_t elapsed;
         };
-
-        struct [[eosio::table, eosio::contract("eosio.system")]] producer_info {
-            name                  owner;
-            double                total_votes = 0;
-            eosio::public_key     producer_key; /// a packed public key object
-            bool                  is_active = true;
-            std::string           url;
-            uint32_t              unpaid_blocks = 0;
-            time_point            last_claim_time;
-            uint16_t              location = 0;
-            uint64_t primary_key()const { return owner.value;                             }
-            double   by_votes()const    { return is_active ? -total_votes : total_votes;  }
-            bool     active()const      { return is_active;                               }
-            void     deactivate()       { producer_key = public_key(); is_active = false; }
-
-            EOSLIB_SERIALIZE(producer_info,(owner)(total_votes)(producer_key)(is_active)(url)(unpaid_blocks)(last_claim_time)(location) )
-        };
-
-        typedef eosio::multi_index<"producers"_n,producer_info,indexed_by<"prototalvote"_n, const_mem_fun<producer_info, double, &producer_info::by_votes>>>producers_table;
 
         /**
          * Simple CPU benchmark that calculates Mersenne prime numbers.
@@ -77,7 +59,7 @@ CONTRACT apibenchmark : public eosio::contract {
 
             api_index apis(_self, _self.value);
 
-            producers_table prods(name("eosio"),name("eosio"));
+            producers_table prods("eosio"_n,"eosio"_n.value);
 
             for (int i = 0; i < tests.size(); ++i) {
 
@@ -206,6 +188,20 @@ CONTRACT apibenchmark : public eosio::contract {
         };
 
         typedef multi_index<"testers"_n, tester> tester_index;
+
+        TABLE producer_info {
+            name                  owner;
+            double                total_votes = 0;
+            public_key            producer_key; /// a packed public key object
+            bool                  is_active = true;
+            std::string           url;
+            uint32_t              unpaid_blocks = 0;
+            time_point            last_claim_time;
+            uint16_t              location = 0;
+            uint64_t primary_key() const {return owner.value;}
+        };
+
+        typedef multi_index<"producers"_n,producer_info> producers_table;
 
         BOOL is_prime(int p) {
             if (p == 2) {
